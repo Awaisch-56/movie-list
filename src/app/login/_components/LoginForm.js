@@ -15,15 +15,23 @@ const LoginForm = () => {
 
   const isLoading = useSelector((state) => state.auth.loading);
 
-  const handleLogin = async (data) => {
-    await dispatch(login(data));
-    let token = localStorage.getItem("token");
-    if (token !== null) {
-      router.push("/movies-list");
+const handleLogin = async (data) => {
+  try {
+    const resultAction = await dispatch(login(data));
+
+    if (login.fulfilled.match(resultAction)) {
       toast.success("Login Successful");
-      return;
+    } else {
+      toast.warn("Server not responding, showing static movie list.");
     }
-  };
+
+    router.push("/movies-list"); 
+  } catch (error) {
+    toast.error("Server error. Showing static movie list.");
+    router.push("/movies-list");
+  }
+};
+
 
   const formik = useFormik({
     initialValues: {

@@ -34,23 +34,32 @@ const CreateMovieForm = () => {
     setSelectedImage(null);
   };
 
-  const handleSubmitButton = async (data) => {
-    const formData = new FormData();
+ const handleSubmitButton = async (data) => {
+  setEnableButton(false);
 
-    formData.append("name", data.name);
-    formData.append("year", data.year);
-    formData.append("image", data.image);
+  const formData = new FormData();
+  formData.append("name", data.name);
+  formData.append("year", data.year);
+  formData.append("image", data.image);
 
-    await dispatch(createMovie(formData))
-      .unwrap()
-      .then((res) => {
-        toast.success("Movie Created Successfully");
-        router.push("/movies-list");
-      })
-      .catch(() => {
-        setEnableButton(true);
-      });
-  };
+  try {
+    const result = await dispatch(createMovie(formData));
+
+    if (createMovie.fulfilled.match(result)) {
+      toast.success("Movie Created Successfully");
+    } else {
+      toast.warn("Server not responding, displaying static movies.");
+    }
+
+    router.push("/movies-list");
+  } catch (error) {
+    toast.error("Server error. Showing static movie list.");
+    router.push("/movies-list");
+  } finally {
+    setEnableButton(true);
+  }
+};
+
 
   const formik = useFormik({
     initialValues: {

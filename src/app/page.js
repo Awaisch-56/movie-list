@@ -1,10 +1,10 @@
 import React from "react";
-import HomePage from "./_components/HomePage";
+import MoviesList from "./movies-list/_components/MoviesList";
 
 const Home = () => {
   return (
     <>
-      <HomePage />
+    <MoviesList/>
     </>
   );
 };
